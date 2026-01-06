@@ -7,3 +7,9 @@
 # Mac
 */.DS_Store
 .DS_Store
+
+java/test-write-vehicle-position.pb
+
+java/vehicle-position-pre-occupancy-defaults-with-occupancy-status.pb
+
+java/vehicle-position-pre-occupancy-defaults-without-occupancy-status.pb
