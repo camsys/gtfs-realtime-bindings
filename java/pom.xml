@@ -22,24 +22,24 @@
         <version>9</version>
     </parent>
 
-    <groupId>org.mobilitydata</groupId>
+    <groupId>com.camsys</groupId>
     <artifactId>gtfs-realtime-bindings</artifactId>
-    <version>0.0.9-SNAPSHOT</version>
+    <version>0.0.9-SNAPSHOT-cs</version>
 
     <name>gtfs-realtime-bindings</name>
     <description>Java classes generated from the GTFS-realtime protocol buffer specification.</description>
-    <url>https://github.com/MobilityData/gtfs-realtime-bindings</url>
+    <url>https://github.com/camsys/gtfs-realtime-bindings</url>
 
     <scm>
-        <connection>scm:git:https://github.com/MobilityData/gtfs-realtime-bindings.git</connection>
-        <developerConnection>scm:git:https://github.com/MobilityData/gtfs-realtime-bindings.git</developerConnection>
-        <url>https://github.com/MobilityData/gtfs-realtime-bindings</url>
+        <connection>scm:git:https://github.com/camsys/gtfs-realtime-bindings.git</connection>
+        <developerConnection>scm:git:https://github.com/camsys/gtfs-realtime-bindings.git</developerConnection>
+        <url>https://github.com/camsys/gtfs-realtime-bindings</url>
         <tag>HEAD</tag>
     </scm>
 
     <issueManagement>
         <system>GitHub</system>
-        <url>https://github.com/MobilityData/gtfs-realtime-bindings/issues</url>
+        <url>https://github.com/camsys/gtfs-realtime-bindings/issues</url>
     </issueManagement>
 
     <licenses>
@@ -57,6 +57,13 @@
             <email>maxime@mobilitydata.org</email>
             <organization>MobilityData</organization>
             <organizationUrl>http://www.mobilitydata.org</organizationUrl>
+        </developer>
+        <developer>
+            <id>lcaraballo</id>
+            <name>Lenny Caraballo</name>
+            <email>lcaraballo@camsys.com</email>
+            <organization>Cambridge Systematics</organization>
+            <organizationUrl>http://www.camsys.com</organizationUrl>
         </developer>
     </developers>
 
@@ -124,17 +131,31 @@
                 </executions>
             </plugin>
         </plugins>
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-ssh</artifactId>
+                <version>3.0.0</version>
+            </extension>
+            <extension>
+                <groupId>com.allogy.maven.wagon</groupId>
+                <artifactId>maven-s3-wagon</artifactId>
+                <version>1.2.0</version>
+            </extension>
+        </extensions>
     </build>
 
     <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
         <repository>
-            <id>ossrh</id>
-            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2</url>
+            <id>releases-camsys-public-repo</id>
+            <name>Camsys Public Release Repo</name>
+            <url>s3://repo.camsys-apps.com/releases/</url>
         </repository>
+        <snapshotRepository>
+            <id>snapshots-camsys-public-repo</id>
+            <name>Camsys Public Snapshot Repo</name>
+            <url>s3://repo.camsys-apps.com/snapshots/</url>
+        </snapshotRepository>
     </distributionManagement>
 
     <profiles>
