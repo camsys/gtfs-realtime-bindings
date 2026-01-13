@@ -245,4 +245,77 @@ public class GtfsRealtimeTest {
     assertFalse(entity.getVehicle().getTrip().hasStartDate());
     assertFalse(entity.getVehicle().getTrip().hasStartTime());
   }
+
+  @Test
+  public void testWriteAndReadTripModifications() throws IOException {
+    final String FILE_NAME = "test-write-trip-modifications.pb";
+
+    createTripModificationsEntity();
+    feedMessageBuilder.setEntity(0, feedEntityBuilder.build());
+
+    // Write and read trip modifications to/from byte array
+    final byte[] bytes = feedMessageBuilder.build().toByteArray();
+    validateParsedFeedWithTripModifications(FeedMessage.parseFrom(bytes));
+
+    // Write and read trip modifications to/from file
+    final OutputStream out = new BufferedOutputStream(new FileOutputStream(new File(FILE_NAME)));
+    feedMessageBuilder.build().writeTo(out);
+    out.close();
+    final FileInputStream fis = new FileInputStream(FILE_NAME);
+    validateParsedFeedWithTripModifications(FeedMessage.parseFrom(fis));
+
+    clearAndInitRequiredFeedFields();
+  }
+
+  @Test
+  public void testTripModificationsHasAndClear() {
+    GtfsRealtime.FeedEntity.Builder entityBuilder = GtfsRealtime.FeedEntity.newBuilder();
+    entityBuilder.setId("TEST_TRIP_MOD_ENTITY");
+
+    // Test that initially there are no trip modifications
+    assertFalse(entityBuilder.hasTripModifications());
+
+    // Create and set trip modifications
+    GtfsRealtime.TripModifications.Builder tripModBuilder = GtfsRealtime.TripModifications.newBuilder();
+    entityBuilder.setTripModifications(tripModBuilder.build());
+
+    // Test that trip modifications are now set
+    assertTrue(entityBuilder.hasTripModifications());
+    assertNotNull(entityBuilder.getTripModifications());
+
+    // Clear trip modifications
+    entityBuilder.clearTripModifications();
+
+    // Test that trip modifications are cleared
+    assertFalse(entityBuilder.hasTripModifications());
+  }
+
+  private static void createTripModificationsEntity() {
+    GtfsRealtime.TripModifications.Builder tripModBuilder = GtfsRealtime.TripModifications.newBuilder();
+
+    feedEntityBuilder.clear();
+    feedEntityBuilder.setId(ENTITY_ID);
+    feedEntityBuilder.setTripModifications(tripModBuilder.build());
+  }
+
+  private static void validateParsedFeedWithTripModifications(FeedMessage feed) {
+    // Header
+    assertTrue(feed.hasHeader());
+    assertTrue(feed.getHeader().hasGtfsRealtimeVersion());
+    assertEquals("2.0", feed.getHeader().getGtfsRealtimeVersion());
+
+    // Entity
+    assertEquals(1, feed.getEntityCount());
+    FeedEntity entity = feed.getEntity(0);
+    assertEquals(ENTITY_ID, entity.getId());
+
+    // Trip Modifications
+    assertTrue(entity.hasTripModifications());
+    assertNotNull(entity.getTripModifications());
+
+    // Verify other fields are not set
+    assertFalse(entity.hasVehicle());
+    assertFalse(entity.hasAlert());
+    assertFalse(entity.hasTripUpdate());
+  }
 }
